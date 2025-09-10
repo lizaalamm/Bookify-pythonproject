@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookify - Moonlight Book Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='moonlight-theme.css') }}">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="moon"></div>
+   
+  <nav class="main-nav">
+    <div class="nav-container">
+        <div class="nav-logo">Bookify <span class="moon-icon"></span></div>
+        <div class="nav-links">
+            <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
+            <a href="/readinglist"><i class="fas fa-bookmark"></i> Reading List</a>
+            <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+        </div>
+    </div>
+</nav>
+ <main>
+  <!-- 1. Personalized Welcome Section with Integrated Search -->
+  <section class="hero-section">
+    <div class="hero-overlay">
+      <div class="hero-content">
+        <div class="welcome-message">
+          <h1 class="hero-heading">Hello, Night Reader!</h1>
+          <p class="hero-text">Ready to discover your next favorite book under the stars?</p>
+          
+          <!-- Search Bar Integrated into Hero Section -->
+          <div class="hero-search-container fade-in">
+            <form action="/search" method="GET" class="celestial-search">
+              <input type="text" name="q" placeholder="Search by title, author, or genre..." required
+                class="search-input">
+              <button type="submit" class="search-btn">
+               
+                <span class="btn-text">Find Books</span>
+              </button>
+            </form>
+          </div>
+          
+          <div class="hero-stars">
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Quick Filters -->
+  <section class="quick-filters fade-in">
+    <h3>Browse by Mood</h3>
+    <div class="filter-buttons">
+      {% for genre in popular_genres %}
+      <a href="/search?q={{ genre }}" class="filter-btn">{{ genre }}</a>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<!-- 8. Reading Challenge and Newsletter Side by Side -->
+<section class="dual-sections fade-in">
+    <!-- Reading Challenge -->
+    <div class="reading-challenge">
+        <h2><i class="fas fa-trophy"></i> {{ current_year }} Reading Challenge</h2>
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 30%"></div>
+        </div>
+        <p>You've read <strong>3</strong> of <strong>10</strong> books this year</p>
+        <button class="challenge-btn">Update Challenge</button>
+    </div>
+    
+    <!-- Newsletter -->
+    <div class="newsletter">
+        <h2><i class="fas fa-envelope"></i> Moonlight Reading Digest</h2>
+        <p>Get weekly recommendations delivered to your inbox</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" required>
+            <button type="submit">Subscribe</button>
+        </form>
+        <p class="disclaimer">We'll never share your email. Unsubscribe anytime.</p>
+    </div>
+</section>
+    <footer>
+        <div class="footer-links">
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-goodreads"></i></a>
+        </div>
+        <p>Powered by Google Books API</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

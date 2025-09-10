@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results - Bookify Moonlight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='moonlight-theme.css') }}">
+    <style>
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .notification.success {
+            background: rgba(106, 90, 205, 0.9);
+            border-left: 5px solid #fffacd;
+        }
+        .notification.error {
+            background: rgba(255, 71, 87, 0.9);
+            border-left: 5px solid #fff;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="moon"></div>
+    
+    <header>
+        <h1>Bookify</h1>
+        <p class="tagline">Searching the moonlight for "{{ query }}"</p>
+        <a href="/readinglist" class="reading-list-link">
+            <i class="fas fa-bookmark"></i> My Reading List
+        </a>
+    </header>
+
+    <main class="search-results-page">
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        
+        {% if error %}
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i> Error: {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if books %}
+            <section class="results-container">
+                <h2><i class="fas fa-search"></i> {{ books|length }} books found in the moonlight</h2>
+                
+                <div class="results-grid">
+                    {% for book in books %}
+                    <div class="result-card fade-in">
+                        <div class="result-image">
+                            {% if book.thumbnail %}
+                            <img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="book-cover">
+                            {% else %}
+                            <div class="no-cover">
+                                <i class="fas fa-book-open"></i>
+                                <span>No cover available</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="result-details">
+                            <h3>{{ book.title }}</h3>
+                            <p class="author">{{ book.author }}</p>
+                            <p class="description">{{ book.description }}</p>
+                            <div class="result-actions">
+                                <button class="save-btn" 
+                                        data-title="{{ book.title }}"
+                                        data-author="{{ book.author }}"
+                                        data-description="{{ book.description }}"
+                                        data-thumbnail="{% if book.thumbnail %}{{ book.thumbnail }}{% else %}/static/images/no-cover.png{% endif %}">
+                                    <i class="fas fa-bookmark"></i> Save
+                                </button>
+                                <button class="preview-btn"><i class="fas fa-eye"></i> Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <div class="no-results">
+                <i class="fas fa-book-dead"></i>
+                <h3>No books found for "{{ query }}"</h3>
+                <p>Try searching for:</p>
+                <ul class="search-tips">
+                    <li>Specific titles like "Dune" or "The Silent Patient"</li>
+                    <li>Author names like "Stephen King" or "Margaret Atwood"</li>
+                    <li>Genres like "Science Fiction" or "Historical Fiction"</li>
+                </ul>
+                <a href="/" class="home-link">Return to moonlight homepage</a>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-goodreads"></i></a>
+        </div>
+        <p>Powered by Google Books API</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

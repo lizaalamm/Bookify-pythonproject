@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Reading List - Bookify Moonlight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='moonlight-theme.css') }}">
+    <style>
+        /* Reading List Specific Styles */
+        .reading-list-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .reading-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reading-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .reading-list-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(106, 90, 205, 0.3);
+        }
+
+        .reading-list-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(106, 90, 205, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 71, 87, 0.7);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 71, 87, 0.9);
+            transform: scale(1.1);
+        }
+
+        .empty-list {
+            text-align: center;
+            padding: 4rem;
+            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .book-cover {
+            max-height: 200px;
+            width: auto;
+            margin: 0 auto 1rem;
+            display: block;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .no-cover {
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .no-cover i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .result-details {
+            color: var(--text);
+        }
+
+        .result-details h3 {
+            margin-top: 0;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .author {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: -webkit-box;
+          
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-count {
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .notification.success {
+            background: rgba(106, 90, 205, 0.9);
+            border-left: 5px solid #fffacd;
+        }
+
+        .notification.error {
+            background: rgba(255, 71, 87, 0.9);
+            border-left: 5px solid #fff;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="moon"></div>
+    
+    <header>
+        <h1>Bookify</h1>
+        <p class="tagline">My Personal Reading List</p>
+        <a href="/" class="reading-list-link">
+            <i class="fas fa-home"></i> Back to Search
+        </a>
+    </header>
+
+    <main class="reading-list-container">
+        <div class="reading-list-header">
+            <h2><i class="fas fa-bookmark"></i> Saved Books</h2>
+            <span class="book-count">{{ books|length }} book{% if books|length != 1 %}s{% endif %}</span>
+        </div>
+        
+        {% if books %}
+            <div class="reading-list-grid">
+                {% for book in books %}
+                <div class="reading-list-card">
+                    <button class="remove-btn" data-title="{{ book.title }}" data-author="{{ book.author }}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="result-image">
+                        {% if book.thumbnail %}
+                        <img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="book-cover" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/no-cover.png') }}'">
+                        {% else %}
+                        <div class="no-cover">
+                            <i class="fas fa-book-open"></i>
+                            <span>No cover available</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="result-details">
+                        <h3>{{ book.title }}</h3>
+                        <p class="author">{{ book.author }}</p>
+                        <p class="description">{{ book.description or "No description available" }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-list">
+                <i class="fas fa-book-dead fa-3x"></i>
+                <h3>Your reading list is empty</h3>
+                <p>Save some books from your search results to see them here</p>
+                <a href="/" class="home-link">Search for books</a>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-goodreads"></i></a>
+        </div>
+        <p>Powered by Google Books API</p>
+        <p>&copy; {{ current_year }} Bookify Moonlight</p>
+    </footer>
+
+    <script>
+        // Remove book functionality
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const bookCard = this.closest('.reading-list-card');
+                const title = this.dataset.title;
+                const author = this.dataset.author;
+                
+                fetch('/remove_book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showNotification(data.message, 'success');
+                        bookCard.style.animation = 'fadeOut 0.3s ease-out';
+                        setTimeout(() => bookCard.remove(), 300);
+                        
+                        // Update book count
+                        const bookCount = document.querySelector('.book-count');
+                        const currentCount = parseInt(bookCount.textContent);
+                        bookCount.textContent = `${currentCount - 1} book${currentCount - 1 !== 1 ? 's' : ''}`;
+                        
+                        // Show empty message if no books left
+                        if (currentCount - 1 === 0) {
+                            document.querySelector('.reading-list-grid').innerHTML = `
+                                <div class="empty-list">
+                                    <i class="fas fa-book-dead fa-3x"></i>
+                                    <h3>Your reading list is empty</h3>
+                                    <p>Save some books from your search results to see them here</p>
+                                    <a href="/" class="home-link">Search for books</a>
+                                </div>
+                            `;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to remove book', 'error');
+                });
+            });
+        });
+
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // Animation for fade out
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.9); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

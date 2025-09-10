@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='moonlight-theme.css') }}">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="moon"></div>
+   
+    <nav class="main-nav">
+        
+  <nav class="main-nav">
+    <div class="nav-container">
+        <div class="nav-logo">Bookify <span class="moon-icon">🌙</span></div>
+        <div class="nav-links">
+            <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
+            <a href="/readinglist"><i class="fas fa-bookmark"></i> Reading List</a>
+            <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+        </div>
+    </div
+    </nav>
+
+    <main class="profile-container">
+        <!-- 1. Profile Header Section -->
+        <section class="profile-header celestial-card">
+            <div class="avatar-wrapper">
+                <div class="user-avatar">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                <button class="edit-avatar-btn"><i class="fas fa-camera"></i></button>
+            </div>
+            <h1>Reader Profile</h1>
+            <p class="user-bio">Your Bookify Dashboard</p>
+            <button class="edit-profile-btn"><i class="fas fa-pencil-alt"></i> Edit Profile</button>
+        </section>
+
+    
+        <!-- 5. Favorite Genres -->
+        <section class="favorite-genres celestial-card">
+            <h2><i class="fas fa-heart"></i> Favorite Genres</h2>
+            <div class="genre-tags">
+                <span class="genre-tag">Fantasy</span>
+                <span class="genre-tag">Science Fiction</span>
+                <span class="genre-tag">Mystery</span>
+                <span class="genre-tag">+ Add More</span>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-goodreads"></i></a>
+        </div>
+        <p>Powered by Google Books API</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
